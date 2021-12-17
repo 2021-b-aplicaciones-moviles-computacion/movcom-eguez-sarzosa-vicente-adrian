@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 
@@ -13,8 +14,15 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
+            if(result.data != null){
+                val data = result.data
+                Log.i("intent-epn", "${data?.getStringExtra("nombreModificado")}")
+                Log.i("intent-epn", "${data?.getIntExtra("edadModificado", 0)}")
+            }
         }
     }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,7 +50,8 @@ class MainActivity : AppCompatActivity() {
         intentExplicito.putExtra("nombre", "Adrian")
         intentExplicito.putExtra("apellido", "Eguez")
         intentExplicito.putExtra("edad", 32)
-        resultLauncher.launch(intent)
+        intentExplicito.putExtra("entrenador",BEntrenador("a","b"))
+        resultLauncher.launch(intentExplicito)
 //
 //        startActivityForResult(intent, CODIGO_RESPUESTA_INTENT_EXPLICITO)
 
