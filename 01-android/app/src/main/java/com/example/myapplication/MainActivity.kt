@@ -2,8 +2,10 @@ package com.example.myapplication
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    val CODIGO_RESPUESTA_INTENT_IMPLICITO = 402
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +44,15 @@ class MainActivity : AppCompatActivity() {
             .setOnClickListener {
                 abrirActividadConParametros(CIntentExplicitoParametros::class.java)
             }
+        val botonIntentImplicito = findViewById<Button>(R.id.btn_ir_intent_implicito)
+        botonIntentImplicito
+            .setOnClickListener {
+                val intentConRespuesta = Intent(
+                    Intent.ACTION_PICK,
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI
+                )
+                startActivityForResult(intentConRespuesta, CODIGO_RESPUESTA_INTENT_IMPLICITO)
+            }
     }
     fun abrirActividadConParametros(
         clase: Class<*>,
@@ -51,18 +63,48 @@ class MainActivity : AppCompatActivity() {
         intentExplicito.putExtra("apellido", "Eguez")
         intentExplicito.putExtra("edad", 32)
         intentExplicito.putExtra("entrenador",BEntrenador("a","b"))
-        resultLauncher.launch(intentExplicito)
-//
-//        startActivityForResult(intent, CODIGO_RESPUESTA_INTENT_EXPLICITO)
+//        resultLauncher.launch(intentExplicito)
+        startActivityForResult(intentExplicito, CODIGO_RESPUESTA_INTENT_EXPLICITO)// 401
+    }
 
-//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-//            when (it.resultCode) {
-//                Activity.RESULT_OK -> {
-//                    //Ejecutar codigo OK
-//                }
-//            }
-//        }
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            CODIGO_RESPUESTA_INTENT_EXPLICITO -> { // 401
+                if (resultCode == RESULT_OK) {
+                    Log.i("intent-epn", "${data?.getStringExtra("nombreModificado")}")
+                }
+                if (resultCode == RESULT_CANCELED) {
+                    Log.i("intent-epn", "Cancelado")
+                }
+            }
+            CODIGO_RESPUESTA_INTENT_IMPLICITO -> {
+                if (resultCode == RESULT_OK) {
+                    if (data != null) {
+                        if (data.data != null) {
+                            val uri: Uri = data.data!!
+                            val cursor = contentResolver.query(
+                                uri,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null
+                            )
+                            cursor?.moveToFirst()
+                            val indiceTelefono = cursor?.getColumnIndex(
+                                ContactsContract.CommonDataKinds.Phone.NUMBER
+                            )
+                            val telefono = cursor?.getString(
+                                indiceTelefono!!
+                            )
+                            cursor?.close()
+                            Log.i("intent-epn", "Telefono ${telefono}")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun irActividad(
