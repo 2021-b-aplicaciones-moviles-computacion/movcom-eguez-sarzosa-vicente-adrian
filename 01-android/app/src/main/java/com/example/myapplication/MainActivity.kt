@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            if(result.data != null){
+            if (result.data != null) {
                 val data = result.data
                 Log.i("intent-epn", "${data?.getStringExtra("nombreModificado")}")
                 Log.i("intent-epn", "${data?.getIntExtra("edadModificado", 0)}")
@@ -29,6 +29,40 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // BASE DE DATOS SQLITE
+
+        EBaseDeDatos.TablaUsuario = ESqliteHelperUsuario(this)
+
+        if (EBaseDeDatos.TablaUsuario != null) {
+            val idQuemado = 2
+            EBaseDeDatos.TablaUsuario?.crearUsuarioFormulario(
+                "Adrian",
+                "Adrian desc"
+            )
+            var consulta = EBaseDeDatos.TablaUsuario?.consultarUsuarioPorId(
+                idQuemado
+            )
+            Log.i("bdd", "Primera Consulta: ${consulta?.nombre}")
+            EBaseDeDatos.TablaUsuario?.actualizarUsuarioFormulario(
+                "Vicente",
+                "Vicenet desc",
+                idQuemado
+            )
+            consulta = EBaseDeDatos.TablaUsuario?.consultarUsuarioPorId(
+                idQuemado
+            )
+            Log.i("bdd", "Primera Consulta: ${consulta?.nombre}")
+            EBaseDeDatos.TablaUsuario?.eliminarUsuarioFormulario(
+                idQuemado
+            )
+            consulta = EBaseDeDatos.TablaUsuario?.consultarUsuarioPorId(
+                idQuemado
+            )
+            Log.i("bdd", "Primera Consulta: ${consulta?.nombre}")
+        }
+
+
         val botonCicloVida = findViewById<Button>(R.id.btn_ir_ciclo_vida)
         botonCicloVida
             .setOnClickListener {
@@ -54,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                 startActivityForResult(intentConRespuesta, CODIGO_RESPUESTA_INTENT_IMPLICITO)
             }
     }
+
     fun abrirActividadConParametros(
         clase: Class<*>,
     ) {
@@ -62,12 +97,12 @@ class MainActivity : AppCompatActivity() {
         intentExplicito.putExtra("nombre", "Adrian")
         intentExplicito.putExtra("apellido", "Eguez")
         intentExplicito.putExtra("edad", 32)
-        intentExplicito.putExtra("entrenador",BEntrenador("a","b"))
+        intentExplicito.putExtra("entrenador", BEntrenador("a", "b"))
 //        resultLauncher.launch(intentExplicito)
         startActivityForResult(intentExplicito, CODIGO_RESPUESTA_INTENT_EXPLICITO)// 401
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             CODIGO_RESPUESTA_INTENT_EXPLICITO -> { // 401
