@@ -39,4 +39,27 @@
         app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
+    <Button
+        android:id="@+id/btn_ir_restaurante"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="52dp"
+        android:text="Restaurante"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/btn_login"
+        app:layout_constraintEnd_toEndOf="@+id/btn_login"
+        app:layout_constraintHorizontal_bias="0.629"
+        app:layout_constraintStart_toStartOf="@+id/btn_login" />
+
+    <Button
+        android:id="@+id/btn_ir_producto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:text="Productos"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/btn_ir_restaurante"
+        app:layout_constraintEnd_toEndOf="@+id/btn_ir_restaurante"
+        app:layout_constraintStart_toStartOf="@+id/btn_ir_restaurante" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
